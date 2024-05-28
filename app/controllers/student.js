@@ -50,7 +50,18 @@ module.exports = {
             const populateValues = [
                 { path: 'course', select: 'name' },
                 { path: 'createdBy', select: 'name email mobile' }
-            ]
+            ];
+            const { search } = req.query;
+            if (search) {
+                const searchRegex = new RegExp(search, 'i')
+                const searchCriteria = [
+                    { firstName: { $regex: searchRegex } },
+                    { lastName: { $regex: searchRegex } },
+                    { email: { $regex: searchRegex } },
+                    { mobile: { $regex: searchRegex } },
+                ]
+                filter.$or = searchCriteria
+            }
             if (_id) {
                 filter._id = _id;
                 const data = await db.student.findOne(filter).populate(populateValues);

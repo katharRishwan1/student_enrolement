@@ -44,6 +44,15 @@ module.exports = {
         try {
             const _id = req.params.id;
             const filter = { isDeleted: false };
+            const { search } = req.query;
+            if (search) {
+                const searchRegex = new RegExp(search, 'i')
+                const searchCriteria = [
+                    { name: { $regex: searchRegex } },
+                    { fullName: { $regex: searchRegex } },
+                ]
+                filter.$or = searchCriteria
+            }
             const populateValues = [{ path: 'createdBy', select: 'name email mobile' }]
             if (_id) {
                 filter._id = _id;
